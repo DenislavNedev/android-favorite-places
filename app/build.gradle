@@ -21,6 +21,12 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            buildConfigField "String", "API_URL", "\"https://api.foursquare.com/v2/\""
+            buildConfigField "String", "API_VERSION", "\"20201124\""
+            buildConfigField "String", "CLIENT_ID", "\"SM5ZCCGOYYUWEKR2YR3FFRSYA3W2D4SJLXSSIYNICRY1EUGT\""
+            buildConfigField "String", "CLIENT_SECRET", "\"ARXZHXLJFN3FMZVUCIY5UOWDVFDQF4DYSKYIMU3WIGUPZTRO\""
+        }
     }
 
     dataBinding {
