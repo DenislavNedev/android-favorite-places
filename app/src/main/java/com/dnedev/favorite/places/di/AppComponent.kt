@@ -1,10 +1,7 @@
 package com.dnedev.favorite.places.di
 
 import com.dnedev.favorite.places.FavoritePlacesApplication
-import com.dnedev.favorite.places.di.modules.AppModule
-import com.dnedev.favorite.places.di.modules.ApplicationBindingModule
-import com.dnedev.favorite.places.di.modules.NetworkModule
-import com.dnedev.favorite.places.di.modules.ViewModelModule
+import com.dnedev.favorite.places.di.modules.*
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -19,7 +16,8 @@ import javax.inject.Singleton
         ViewModelBuilderModule::class,
         ApplicationBindingModule::class,
         ViewModelModule::class,
-        NetworkModule::class
+        NetworkModule::class,
+        RepositoryModule::class
     ]
 )
 interface AppComponent : AndroidInjector<FavoritePlacesApplication> {
