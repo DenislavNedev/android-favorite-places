@@ -1,7 +1,8 @@
-package com.dnedev.favorite.places
+package com.dnedev.favorite.places.ui.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.dnedev.favorite.places.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
