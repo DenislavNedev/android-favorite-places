@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">FavoritePlaces</string>
+    <string name="venues">Venues</string>
+    <string name="map">Map</string>
 </resources>
