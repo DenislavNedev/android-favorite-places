@@ -6,6 +6,7 @@ buildscript {
         version_moshi = "1.9.2"
         version_retrofit = "2.7.2"
         nav_version = "2.3.0-rc01"
+        room_version = "2.2.5"
     }
     repositories {
         google()
