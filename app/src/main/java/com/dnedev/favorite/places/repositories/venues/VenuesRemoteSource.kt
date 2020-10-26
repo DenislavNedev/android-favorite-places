@@ -1,6 +1,6 @@
 package com.dnedev.favorite.places.repositories.venues
 
-import com.dnedev.favorite.places.data.VenuesApiResponse
+import com.dnedev.favorite.places.data.venues.VenuesApiResponse
 import com.dnedev.favorite.places.network.VenuesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

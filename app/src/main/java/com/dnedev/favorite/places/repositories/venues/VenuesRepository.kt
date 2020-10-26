@@ -1,8 +1,8 @@
 package com.dnedev.favorite.places.repositories.venues
 
 import com.dnedev.favorite.places.BuildConfig
-import com.dnedev.favorite.places.data.VenuesApiResponse
-import com.dnedev.favorite.places.data.covertToVenueItemUiModel
+import com.dnedev.favorite.places.data.venues.VenuesApiResponse
+import com.dnedev.favorite.places.data.venues.covertToVenueItemUiModel
 import com.dnedev.favorite.places.di.modules.RepositoryModule
 import com.dnedev.favorite.places.ui.venues.VenueItemUiModel
 import com.dnedev.favorite.places.utils.*

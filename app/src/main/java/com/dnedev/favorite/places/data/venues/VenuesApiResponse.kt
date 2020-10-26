@@ -1,5 +1,6 @@
-package com.dnedev.favorite.places.data
+package com.dnedev.favorite.places.data.venues
 
+import com.dnedev.favorite.places.data.MetaDataResponse
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 

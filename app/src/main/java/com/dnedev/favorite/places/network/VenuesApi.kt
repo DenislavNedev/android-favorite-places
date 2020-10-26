@@ -1,6 +1,6 @@
 package com.dnedev.favorite.places.network
 
-import com.dnedev.favorite.places.data.VenuesApiResponse
+import com.dnedev.favorite.places.data.venues.VenuesApiResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response

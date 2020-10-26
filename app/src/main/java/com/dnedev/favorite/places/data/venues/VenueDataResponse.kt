@@ -1,4 +1,4 @@
-package com.dnedev.favorite.places.data
+package com.dnedev.favorite.places.data.venues
 
 import com.dnedev.favorite.places.ui.venues.VenueItemUiModel
 import com.squareup.moshi.Json
