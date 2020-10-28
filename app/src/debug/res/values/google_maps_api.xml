@@ -1,0 +1,24 @@
+<resources>
+    <!--
+    TODO: Before you run your application, you need a Google Maps API key.
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=CC:B1:CE:47:ED:C2:2E:B2:82:D7:F5:34:45:05:D9:D3:30:1B:96:71%3Bcom.dnedev.favorite.places.ui.map
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    com.dnedev.favorite.places.ui.map
+
+    SHA-1 certificate fingerprint:
+    CC:B1:CE:47:ED:C2:2E:B2:82:D7:F5:34:45:05:D9:D3:30:1B:96:71
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyBCzvjvGhumTT1bHR28pgMpElmD2B_jOK8</string>
+</resources>
