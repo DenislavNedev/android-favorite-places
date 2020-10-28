@@ -8,10 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.dnedev.favorite.places.R
 import com.dnedev.favorite.places.data.venues.convertToVenueItemUiModel
 import com.dnedev.favorite.places.repositories.venues.VenuesRepository
-import com.dnedev.favorite.places.utils.POMORIE_NEAR_CITY
-import com.dnedev.favorite.places.utils.RADIUS
-import com.dnedev.favorite.places.utils.RESTAURANT_CATEGORY_ID
-import com.dnedev.favorite.places.utils.SUPERMARKET_CATEGORY_ID
+import com.dnedev.favorite.places.utils.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,14 +24,22 @@ class VenuesViewModel @Inject constructor(
     val uiModel: LiveData<VenuesUiModel>
         get() = _uiModel
 
-    //TODO check for internet
-    init {
+    fun initViewModel() {
         viewModelScope.launch {
-            initVenues(SUPERMARKET_CATEGORY_ID)
-            initVenues(RESTAURANT_CATEGORY_ID)
-            getFavorites()
-            checkAreAllItemsFavorite(SUPERMARKET_CATEGORY_ID)
-            checkAreAllItemsFavorite(RESTAURANT_CATEGORY_ID)
+            if (getApplication<Application>().applicationContext.isNetworkAvailable()) {
+                viewModelScope.launch {
+                    initVenues(SUPERMARKET_CATEGORY_ID)
+                    initVenues(RESTAURANT_CATEGORY_ID)
+                    getFavorites()
+                    checkAreAllItemsFavorite(SUPERMARKET_CATEGORY_ID)
+                    checkAreAllItemsFavorite(RESTAURANT_CATEGORY_ID)
+                }
+            } else {
+                loadVenuesOffline()
+                checkAreAllItemsFavorite(SUPERMARKET_CATEGORY_ID)
+                checkAreAllItemsFavorite(RESTAURANT_CATEGORY_ID)
+                getFavorites()
+            }
         }
     }
 
@@ -49,6 +54,34 @@ class VenuesViewModel @Inject constructor(
                 categoryId
             ), categoryId
         )
+    }
+
+    private suspend fun loadVenuesOffline() {
+        _uiModel.addSource(venuesRepository.getAllVenues()) { favoriteVenues ->
+            favoriteVenues.map { it.convertToVenueItemUiModel() }.filter { venue ->
+                _uiModel.value?.listOfVenues?.let {
+                    !it.contains(venue)
+                } ?: false
+            }.let { newVenues ->
+                showVenuesOffline(
+                    newVenues.filter { it.categoryId == SUPERMARKET_CATEGORY_ID },
+                    SUPERMARKET_CATEGORY_ID
+                )
+                showVenuesOffline(
+                    newVenues.filter { it.categoryId == RESTAURANT_CATEGORY_ID },
+                    RESTAURANT_CATEGORY_ID
+                )
+            }
+
+        }
+    }
+
+    private fun showVenuesOffline(venues: List<VenueItemUiModel>, categoryId: String) {
+        if (venues.isNotEmpty()) {
+            _uiModel.value = _uiModel.value?.apply {
+                this.listOfVenues = listOfVenues + createVenueHeaderItem(categoryId) + venues
+            }
+        }
     }
 
     private suspend fun getFavorites() {
@@ -69,7 +102,6 @@ class VenuesViewModel @Inject constructor(
         }
     }
 
-    //TODO handle error response
     private fun handleVenueResponse(
         response: Pair<List<VenueItemUiModel>?, String?>,
         categoryId: String
@@ -87,12 +119,18 @@ class VenuesViewModel @Inject constructor(
     private suspend fun checkAreAllItemsFavorite(categoryId: String) {
         _uiModel.addSource(venuesRepository.getVenuesByCategory(categoryId)) { currentVenues ->
             _uiModel.value?.listOfVenues?.let { allVenues ->
-                allVenues.filterIsInstance<VenueItemUiModel>()
-                    .filter { it.categoryId == categoryId }.size.let { numberOfAllVenues ->
-                        allVenues.filterIsInstance<VenueHeaderUiModel>()
-                            .first { it.categoryId == categoryId }.areAllVenuesFavorite =
-                            currentVenues.size == numberOfAllVenues && currentVenues.isNotEmpty() && numberOfAllVenues != 0
-                    }
+                if (allVenues.isNotEmpty()) {
+                    allVenues.filterIsInstance<VenueItemUiModel>()
+                        .filter { it.categoryId == categoryId }.let { categoryVenues ->
+                            if (categoryVenues.isNotEmpty()) {
+                                categoryVenues.size.let { numberOfAllVenues ->
+                                    allVenues.filterIsInstance<VenueHeaderUiModel>()
+                                        .first { it.categoryId == categoryId }.areAllVenuesFavorite =
+                                        currentVenues.size == numberOfAllVenues && currentVenues.isNotEmpty() && numberOfAllVenues != 0
+                                }
+                            }
+                        }
+                }
             }
         }
     }
@@ -108,11 +146,12 @@ class VenuesViewModel @Inject constructor(
         with(venueItemUiModel) {
             this.convertToVenue().let {
                 viewModelScope.launch {
-                    if (isAddedAsFavorite) {
+                    isAddedAsFavorite = if (isAddedAsFavorite) {
                         venuesRepository.deleteVenue(it)
-                        isAddedAsFavorite = false
+                        false
                     } else {
                         venuesRepository.addVenueAsFavorite(it)
+                        true
                     }
                 }
             }
@@ -132,6 +171,7 @@ class VenuesViewModel @Inject constructor(
                             }
                         }
                         favoriteVenues.forEach { it.isAddedAsFavorite = false }
+                        areAllVenuesFavorite = false
                     }
             } else {
                 _uiModel.value?.listOfVenues?.filterIsInstance<VenueItemUiModel>()
@@ -141,6 +181,7 @@ class VenuesViewModel @Inject constructor(
                             venuesRepository.insertVenues(it)
                         }
                     }
+                areAllVenuesFavorite = true
             }
         }
     }
@@ -150,7 +191,7 @@ class VenuesViewModel @Inject constructor(
 
     private fun getNameForCategoryById(categoryId: String) = when (categoryId) {
         SUPERMARKET_CATEGORY_ID -> getApplication<Application>().getString(R.string.supermarkets)
-        else -> getApplication<Application>().getString(R.string.supermarkets)
+        else -> getApplication<Application>().getString(R.string.restaurants)
     }
 
     companion object {

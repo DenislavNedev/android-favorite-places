@@ -40,6 +40,7 @@ class VenuesFragment : DaggerFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        viewModel.initViewModel()
         observeUiModel()
         initRecyclerView()
     }
@@ -57,4 +58,6 @@ class VenuesFragment : DaggerFragment() {
             adapter = venuesListAdapter
         }
     }
+
+    //TODO add pull down to refresh
 }

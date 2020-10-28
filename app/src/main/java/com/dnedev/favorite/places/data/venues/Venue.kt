@@ -5,6 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.dnedev.favorite.places.ui.venues.VenueItemUiModel
 
+//TODO add is_favorite column
+
 @Entity(tableName = "venues")
 data class Venue(
     @PrimaryKey
