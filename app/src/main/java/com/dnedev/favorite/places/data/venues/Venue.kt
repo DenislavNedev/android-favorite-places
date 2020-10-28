@@ -3,6 +3,7 @@ package com.dnedev.favorite.places.data.venues
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.dnedev.favorite.places.ui.venues.VenueItemUiModel
 
 @Entity(tableName = "venues")
 data class Venue(
@@ -14,3 +15,13 @@ data class Venue(
     val latitude: Double,
     val longitude: Double
 )
+
+fun Venue.convertToVenueItemUiModel() = VenueItemUiModel(
+    id = id,
+    name = name,
+    latitude = latitude,
+    longitude = longitude,
+    categoryId = categoryId
+).apply {
+    isAddedAsFavorite = true
+}

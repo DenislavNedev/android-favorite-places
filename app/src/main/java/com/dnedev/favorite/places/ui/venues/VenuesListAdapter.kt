@@ -8,7 +8,7 @@ import com.dnedev.favorite.places.R
 import com.dnedev.favorite.places.databinding.VenueListItemBinding
 import com.dnedev.favorite.places.utils.DataBoundListAdapter
 
-class VenuesListAdapter :
+class VenuesListAdapter(private val presenter: VenueItemPresenter) :
     DataBoundListAdapter<VenueItemUiModel, VenueListItemBinding>(VenueDiffUtil()) {
     override fun createBinding(parent: ViewGroup, viewType: Int): VenueListItemBinding =
         DataBindingUtil.inflate(
@@ -19,10 +19,9 @@ class VenuesListAdapter :
         )
 
     override fun bind(binding: VenueListItemBinding, item: VenueItemUiModel) {
+        binding.presenter = presenter
         binding.uiModel = item
     }
-
-
 }
 
 class VenueDiffUtil : DiffUtil.ItemCallback<VenueItemUiModel>() {

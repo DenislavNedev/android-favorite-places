@@ -20,10 +20,9 @@ class VenuesFragment : DaggerFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: VenuesViewModel by activityViewModels { viewModelFactory }
 
-
     //TODO use only one recyclerView with one adapter
-    private val restaurantsListAdapter by lazy { VenuesListAdapter() }
-    private val supermarketsListAdapter by lazy { VenuesListAdapter() }
+    private val restaurantsListAdapter by lazy { VenuesListAdapter(viewModel) }
+    private val supermarketsListAdapter by lazy { VenuesListAdapter(viewModel) }
     private lateinit var binding: VenuesFragmentBinding
 
     override fun onCreateView(

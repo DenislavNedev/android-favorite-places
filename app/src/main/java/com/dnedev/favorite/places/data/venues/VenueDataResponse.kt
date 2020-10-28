@@ -20,9 +20,12 @@ data class VenueLocation(
     val longitude: Double
 )
 
-fun VenueDataResponse.covertToVenueItemUiModel() = VenueItemUiModel(
+fun VenueDataResponse.covertToVenueItemUiModel(categoryId: String) = VenueItemUiModel(
     id = this.id,
     name = this.name,
     longitude = this.locationData.longitude,
-    latitude = this.locationData.latitude
-)
+    latitude = this.locationData.latitude,
+    categoryId = categoryId
+).apply {
+    isAddedAsFavorite = false
+}

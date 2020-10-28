@@ -1,10 +1,9 @@
 package com.dnedev.favorite.places.ui.venues
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import android.util.Log
+import androidx.lifecycle.*
+import com.dnedev.favorite.places.data.venues.convertToVenueItemUiModel
 import com.dnedev.favorite.places.repositories.venues.VenuesRepository
 import com.dnedev.favorite.places.utils.POMORIE_NEAR_CITY
 import com.dnedev.favorite.places.utils.RADIUS
@@ -16,9 +15,10 @@ import javax.inject.Inject
 class VenuesViewModel @Inject constructor(
     application: Application,
     private val venuesRepository: VenuesRepository
-) : AndroidViewModel(application) {
+) : AndroidViewModel(application),
+    VenueItemPresenter {
 
-    private val _uiModel = MutableLiveData<VenuesUiModel>().apply {
+    private val _uiModel = MediatorLiveData<VenuesUiModel>().apply {
         value = VenuesUiModel()
     }
     val uiModel: LiveData<VenuesUiModel>
@@ -27,7 +27,8 @@ class VenuesViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             initRestaurants()
-            initSupermarkets()
+            getFavorites()
+//            initSupermarkets()
         }
     }
 
@@ -52,6 +53,24 @@ class VenuesViewModel @Inject constructor(
         )
     }
 
+    private suspend fun getFavorites() {
+        _uiModel.addSource(venuesRepository.getAllVenues()) { favoriteVenues ->
+            val currentRestaurants = _uiModel.value?.listOfRestaurants?.toMutableList()
+            currentRestaurants?.let {
+                favoriteVenues.map { it.convertToVenueItemUiModel() }.forEach {
+                    currentRestaurants.indexOf(it).let { index ->
+                        if (index != INVALID_INDEX) currentRestaurants[index].isAddedAsFavorite =
+                            true
+                    }
+                }
+            }
+
+            _uiModel.value = _uiModel.value?.apply {
+                listOfRestaurants = currentRestaurants?.toList() ?: emptyList()
+            }
+        }
+    }
+
     //TODO handle error response
     private fun handleVenueResponse(
         response: Pair<List<VenueItemUiModel>?, String?>,
@@ -69,5 +88,24 @@ class VenuesViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    override fun addAsFavorite(venueItemUiModel: VenueItemUiModel) {
+        with(venueItemUiModel) {
+            this.convertToVenue().let {
+                viewModelScope.launch {
+                    if (isAddedAsFavorite) {
+                        venuesRepository.deleteVenue(it)
+                        isAddedAsFavorite = false
+                    } else {
+                        venuesRepository.addVenueAsFavorite(it)
+                    }
+                }
+            }
+        }
+    }
+
+    companion object {
+        const val INVALID_INDEX = -1
     }
 }
