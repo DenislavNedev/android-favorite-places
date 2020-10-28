@@ -6,4 +6,5 @@
     <string name="database_name">favorite_places_database</string>
     <string name="restaurants">Restaurants</string>
     <string name="supermarkets">Supermarkets</string>
+    <string name="sorry_no_results_found_for_this_area">Sorry, no results found for this area.</string>
 </resources>

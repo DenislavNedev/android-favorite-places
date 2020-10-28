@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -17,11 +18,23 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="64dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center"
+                android:text="@string/sorry_no_results_found_for_this_area"
+                android:textSize="18sp"
+                app:visibleGone="@{uiModel.venuesListEmpty}" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/venuesRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"
+                app:visibleGone="@{!uiModel.venuesListEmpty}" />
 
         </LinearLayout>
     </ScrollView>

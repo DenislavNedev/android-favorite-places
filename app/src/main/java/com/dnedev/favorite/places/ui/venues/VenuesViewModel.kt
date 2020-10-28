@@ -43,7 +43,6 @@ class VenuesViewModel @Inject constructor(
         }
     }
 
-    //TODO add no venues state
     //TODO try and catch
 
     private suspend fun initVenues(categoryId: String) {

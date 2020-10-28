@@ -1,5 +1,6 @@
 package com.dnedev.favorite.places.ui.binding
 
+import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.StringRes
@@ -23,5 +24,13 @@ object AppBindingAdapter {
         isAddedAsFavorite: Boolean
     ) {
         view.setImageResource(if (isAddedAsFavorite) R.drawable.ic_favorite else R.drawable.ic_not_favorite)
+    }
+
+    @BindingAdapter("visibleGone")
+    fun visibleGone(
+        view: View,
+        isVisible: Boolean
+    ) {
+        view.visibility = if (isVisible) View.VISIBLE else View.GONE
     }
 }
