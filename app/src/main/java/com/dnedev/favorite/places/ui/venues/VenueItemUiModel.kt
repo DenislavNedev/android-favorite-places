@@ -12,7 +12,7 @@ data class VenueItemUiModel(
     val latitude: Double,
     val longitude: Double,
     val categoryId: String
-) : BaseObservable() {
+) : BaseObservable(), VenueListItem {
     @get:Bindable
     var isAddedAsFavorite: Boolean by Delegates.observable(false) { _, _, _ ->
         notifyPropertyChanged(BR.addedAsFavorite)

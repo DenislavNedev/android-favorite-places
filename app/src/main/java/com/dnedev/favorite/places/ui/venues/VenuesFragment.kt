@@ -20,9 +20,7 @@ class VenuesFragment : DaggerFragment() {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: VenuesViewModel by activityViewModels { viewModelFactory }
 
-    //TODO use only one recyclerView with one adapter
-    private val restaurantsListAdapter by lazy { VenuesListAdapter(viewModel) }
-    private val supermarketsListAdapter by lazy { VenuesListAdapter(viewModel) }
+    private val venuesListAdapter by lazy { VenuesListAdapter(viewModel) }
     private lateinit var binding: VenuesFragmentBinding
 
     override fun onCreateView(
@@ -49,20 +47,14 @@ class VenuesFragment : DaggerFragment() {
     private fun observeUiModel() {
         viewModel.uiModel.observe(viewLifecycleOwner, {
             binding.uiModel = it
-            restaurantsListAdapter.submitList(it.listOfRestaurants)
-            supermarketsListAdapter.submitList(it.listOfSupermarkets)
+            venuesListAdapter.submitList(it.listOfVenues)
         })
     }
 
     private fun initRecyclerView() {
-        with(restaurantRecyclerView) {
+        with(venuesRecyclerView) {
             layoutManager = LinearLayoutManager(context)
-            adapter = restaurantsListAdapter
-        }
-
-        with(supermarketsRecyclerView) {
-            layoutManager = LinearLayoutManager(context)
-            adapter = supermarketsListAdapter
+            adapter = venuesListAdapter
         }
     }
 }

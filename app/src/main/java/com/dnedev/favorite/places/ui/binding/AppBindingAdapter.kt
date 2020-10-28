@@ -1,8 +1,10 @@
 package com.dnedev.favorite.places.ui.binding
 
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.databinding.BindingAdapter
+import com.dnedev.favorite.places.R
 
 object AppBindingAdapter {
     @BindingAdapter("setTextResource")
@@ -15,4 +17,11 @@ object AppBindingAdapter {
         }
     }
 
+    @BindingAdapter("setFavoriteIcon")
+    fun setFavoriteIcon(
+        view: ImageView,
+        isAddedAsFavorite: Boolean
+    ) {
+        view.setImageResource(if (isAddedAsFavorite) R.drawable.ic_favorite else R.drawable.ic_not_favorite)
+    }
 }

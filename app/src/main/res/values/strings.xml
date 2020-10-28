@@ -4,4 +4,6 @@
     <string name="map">Map</string>
     <string name="unexpected_error">An error occurred. Please try again later.</string>
     <string name="database_name">favorite_places_database</string>
+    <string name="restaurants">Restaurants</string>
+    <string name="supermarkets">Supermarkets</string>
 </resources>

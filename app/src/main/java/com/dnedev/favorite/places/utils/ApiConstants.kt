@@ -21,4 +21,4 @@ const val VERSION_ID_QUERY_PARAMETER = "v"
 const val CATEGORY_ID_QUERY_PARAMETER = "categoryId"
 
 const val POMORIE_NEAR_CITY = "Pomorie"
-const val RADIUS = 1000
+const val RADIUS = 200
