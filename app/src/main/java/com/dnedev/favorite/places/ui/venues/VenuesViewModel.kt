@@ -33,6 +33,8 @@ class VenuesViewModel @Inject constructor(
             initVenues(SUPERMARKET_CATEGORY_ID)
             initVenues(RESTAURANT_CATEGORY_ID)
             getFavorites()
+            checkAreAllItemsFavorite(SUPERMARKET_CATEGORY_ID)
+            checkAreAllItemsFavorite(RESTAURANT_CATEGORY_ID)
         }
     }
 
@@ -82,21 +84,63 @@ class VenuesViewModel @Inject constructor(
         }
     }
 
+    private suspend fun checkAreAllItemsFavorite(categoryId: String) {
+        _uiModel.addSource(venuesRepository.getVenuesByCategory(categoryId)) { currentVenues ->
+            _uiModel.value?.listOfVenues?.let { allVenues ->
+                allVenues.filterIsInstance<VenueItemUiModel>()
+                    .filter { it.categoryId == categoryId }.size.let { numberOfAllVenues ->
+                        allVenues.filterIsInstance<VenueHeaderUiModel>()
+                            .first { it.categoryId == categoryId }.areAllVenuesFavorite =
+                            currentVenues.size == numberOfAllVenues && currentVenues.isNotEmpty() && numberOfAllVenues != 0
+                    }
+            }
+        }
+    }
+
     override fun addAsFavorite(venueListItem: VenueListItem) {
         when (venueListItem) {
-            is VenueItemUiModel -> {
-                with(venueListItem) {
-                    this.convertToVenue().let {
-                        viewModelScope.launch {
-                            if (isAddedAsFavorite) {
-                                venuesRepository.deleteVenue(it)
-                                isAddedAsFavorite = false
-                            } else {
-                                venuesRepository.addVenueAsFavorite(it)
-                            }
-                        }
+            is VenueItemUiModel -> addVenueAsFavorite(venueListItem)
+            is VenueHeaderUiModel -> addAllToFavorite(venueListItem)
+        }
+    }
+
+    private fun addVenueAsFavorite(venueItemUiModel: VenueItemUiModel) {
+        with(venueItemUiModel) {
+            this.convertToVenue().let {
+                viewModelScope.launch {
+                    if (isAddedAsFavorite) {
+                        venuesRepository.deleteVenue(it)
+                        isAddedAsFavorite = false
+                    } else {
+                        venuesRepository.addVenueAsFavorite(it)
                     }
                 }
+            }
+        }
+    }
+
+    private fun addAllToFavorite(venueHeaderUiModel: VenueHeaderUiModel) {
+        with(venueHeaderUiModel) {
+
+            if (areAllVenuesFavorite) {
+                _uiModel.value?.listOfVenues?.filterIsInstance<VenueItemUiModel>()
+                    ?.filter { it.categoryId == categoryId && it.isAddedAsFavorite }
+                    ?.let { favoriteVenues ->
+                        favoriteVenues.map { it.convertToVenue() }.let {
+                            viewModelScope.launch {
+                                venuesRepository.deleteVenues(it)
+                            }
+                        }
+                        favoriteVenues.forEach { it.isAddedAsFavorite = false }
+                    }
+            } else {
+                _uiModel.value?.listOfVenues?.filterIsInstance<VenueItemUiModel>()
+                    ?.filter { it.categoryId == categoryId && !it.isAddedAsFavorite }
+                    ?.map { it.convertToVenue() }?.let {
+                        viewModelScope.launch {
+                            venuesRepository.insertVenues(it)
+                        }
+                    }
             }
         }
     }

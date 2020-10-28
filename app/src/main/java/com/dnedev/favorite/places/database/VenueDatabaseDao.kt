@@ -23,4 +23,10 @@ interface VenueDatabaseDao {
 
     @Query("SELECT * FROM venues WHERE category_id=:categoryId")
     fun getVenuesByCategory(categoryId: String): LiveData<List<Venue>>
+
+    @Delete
+    fun deleteVenues(venues: List<Venue>)
+
+    @Insert
+    fun insertVenues(venues: List<Venue>)
 }

@@ -23,6 +23,9 @@ class VenuesRepository @Inject constructor(
         suspend fun insert(venue: Venue)
         suspend fun delete(venue: Venue)
         suspend fun getAllVenues(): LiveData<List<Venue>>
+        suspend fun deleteVenues(venues: List<Venue>)
+        suspend fun insertVenues(venues: List<Venue>)
+        suspend fun getAllVenuesByCategory(categoryId: String): LiveData<List<Venue>>
     }
 
     suspend fun getVenues(
@@ -53,4 +56,15 @@ class VenuesRepository @Inject constructor(
     }
 
     suspend fun getAllVenues() = localSource.getAllVenues()
+
+    suspend fun deleteVenues(venues: List<Venue>) {
+        localSource.deleteVenues(venues)
+    }
+
+    suspend fun insertVenues(venues: List<Venue>) {
+        localSource.insertVenues(venues)
+    }
+
+    suspend fun getVenuesByCategory(categoryId: String) =
+        localSource.getAllVenuesByCategory(categoryId)
 }
