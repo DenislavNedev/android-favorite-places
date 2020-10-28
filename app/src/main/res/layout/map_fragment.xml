@@ -3,6 +3,9 @@
 
     <data>
 
+        <variable
+            name="presenter"
+            type="com.dnedev.favorite.places.ui.map.MapPresenter" />
     </data>
 
     <RelativeLayout
@@ -22,6 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:layout_weight="1"
+                android:onClick="@{() -> presenter.loadSupermarkets()}"
                 android:text="@string/supermarkets" />
 
             <com.google.android.material.button.MaterialButton
@@ -29,6 +33,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:layout_weight="1"
+                android:onClick="@{() -> presenter.loadRestaurants()}"
                 android:text="@string/restaurants" />
         </LinearLayout>
 

@@ -22,3 +22,5 @@ const val CATEGORY_ID_QUERY_PARAMETER = "categoryId"
 
 const val POMORIE_NEAR_CITY = "Pomorie"
 const val RADIUS = 200
+const val POMORIE_LATITUDE = 42.55882
+const val POMORIE_LONGITUDE = 27.64393
