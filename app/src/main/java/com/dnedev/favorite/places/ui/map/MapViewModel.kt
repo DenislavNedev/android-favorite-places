@@ -3,16 +3,22 @@ package com.dnedev.favorite.places.ui.map
 import android.app.Application
 import androidx.lifecycle.*
 import com.dnedev.favorite.places.R
+import com.dnedev.favorite.places.data.map.ShowOnMapItem
+import com.dnedev.favorite.places.data.map.convertToVenueItemUiModel
 import com.dnedev.favorite.places.data.venues.convertToVenueItemUiModel
 import com.dnedev.favorite.places.repositories.venues.VenuesRepository
 import com.dnedev.favorite.places.ui.venues.VenueItemUiModel
+import com.dnedev.favorite.places.ui.venues.convertToShowOnMapItem
 import com.dnedev.favorite.places.ui.venues.convertToVenue
 import com.dnedev.favorite.places.utils.*
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MapViewModel @Inject constructor(
@@ -152,6 +158,34 @@ class MapViewModel @Inject constructor(
     private fun clearUiModel() {
         _uiModel.value = MapUiModel()
     }
+
+    fun showOnMap(showOnMapItemJson: String): LatLng? {
+        val currentItem: VenueItemUiModel? = null
+
+        viewModelScope.launch {
+            convertShowOnMapItemToVenueItemUiModel(showOnMapItemJson)?.let {
+                _uiModel.value = _uiModel.value?.apply {
+                    this.listOfVenues = listOf(it)
+                    this.listOfMarkers = this.listOfVenues.map { venue ->
+                        createMapMarker(venue)
+                    }
+                }
+                getFavorites()
+            }
+        }
+        return currentItem?.let {
+            LatLng(
+                currentItem.latitude,
+                currentItem.longitude
+            )
+        }
+    }
+
+    private suspend fun convertShowOnMapItemToVenueItemUiModel(showOnMapItemJson: String) =
+        withContext(Dispatchers.IO) {
+            Moshi.Builder().build().adapter(ShowOnMapItem::class.java)
+                .fromJson(showOnMapItemJson)?.convertToVenueItemUiModel()
+        }
 
     companion object {
         const val INVALID_INDEX = -1

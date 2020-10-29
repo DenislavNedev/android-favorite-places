@@ -1,12 +1,19 @@
 package com.dnedev.favorite.places.ui.venues
 
 import android.app.Application
+import androidx.core.os.bundleOf
 import androidx.lifecycle.*
 import com.dnedev.favorite.places.R
+import com.dnedev.favorite.places.data.map.ShowOnMapItem
 import com.dnedev.favorite.places.data.venues.convertToVenueItemUiModel
+import com.dnedev.favorite.places.navigation.GraphNav
+import com.dnedev.favorite.places.navigation.NavigateTo
 import com.dnedev.favorite.places.repositories.venues.VenuesRepository
 import com.dnedev.favorite.places.utils.*
+import com.squareup.moshi.Moshi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class VenuesViewModel @Inject constructor(
@@ -21,6 +28,10 @@ class VenuesViewModel @Inject constructor(
     }
     val uiModel: LiveData<VenuesUiModel>
         get() = _uiModel
+
+    private val _navigation = SingleLiveEvent<NavigateTo>()
+    val navigation: LiveData<NavigateTo>
+        get() = _navigation
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun initViewModel() {
@@ -192,6 +203,25 @@ class VenuesViewModel @Inject constructor(
         SUPERMARKET_CATEGORY_ID -> getApplication<Application>().getString(R.string.supermarkets)
         else -> getApplication<Application>().getString(R.string.restaurants)
     }
+
+    override fun showOnMap(venueListItem: VenueListItem) {
+        if (venueListItem is VenueItemUiModel) {
+            viewModelScope.launch {
+                convertVenueItemToShowOnMapJson(venueListItem).let {
+                    _navigation.value = GraphNav(
+                        R.id.action_venuesFragment_to_mapFragment,
+                        bundleOf(SHOW_ON_MAP_ITEM_KEY to it)
+                    )
+                }
+            }
+        }
+    }
+
+    private suspend fun convertVenueItemToShowOnMapJson(venueItemUiModel: VenueItemUiModel) =
+        withContext(Dispatchers.IO) {
+            Moshi.Builder().build().adapter(ShowOnMapItem::class.java)
+                .toJson(venueItemUiModel.convertToShowOnMapItem())
+        }
 
     companion object {
         const val INVALID_INDEX = -1

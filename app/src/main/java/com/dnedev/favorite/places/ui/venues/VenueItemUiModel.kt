@@ -3,6 +3,7 @@ package com.dnedev.favorite.places.ui.venues
 import androidx.databinding.BaseObservable
 import androidx.databinding.Bindable
 import androidx.databinding.library.baseAdapters.BR
+import com.dnedev.favorite.places.data.map.ShowOnMapItem
 import com.dnedev.favorite.places.data.venues.Venue
 import kotlin.properties.Delegates
 
@@ -47,4 +48,13 @@ fun VenueItemUiModel.convertToVenue() = Venue(
     name = name,
     latitude = latitude,
     longitude = longitude
+)
+
+fun VenueItemUiModel.convertToShowOnMapItem() = ShowOnMapItem(
+    id = id,
+    categoryId = categoryId,
+    name = name,
+    latitude = latitude,
+    longitude = longitude,
+    isAddedAsFavorite = isAddedAsFavorite
 )

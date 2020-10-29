@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dnedev.favorite.places.R
 import com.dnedev.favorite.places.databinding.VenuesFragmentBinding
+import com.dnedev.favorite.places.navigation.navigateTo
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.venues_fragment.*
 import javax.inject.Inject
@@ -43,6 +44,7 @@ class VenuesFragment : DaggerFragment() {
         lifecycle.addObserver(viewModel)
         viewModel.initViewModel()
         observeUiModel()
+        observeNavigation()
         initRecyclerView()
     }
 
@@ -50,6 +52,12 @@ class VenuesFragment : DaggerFragment() {
         viewModel.uiModel.observe(viewLifecycleOwner, {
             binding.uiModel = it
             venuesListAdapter.submitList(it.listOfVenues)
+        })
+    }
+
+    private fun observeNavigation() {
+        viewModel.navigation.observe(viewLifecycleOwner, {
+            requireActivity().navigateTo(it)
         })
     }
 

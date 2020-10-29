@@ -11,12 +11,12 @@ import com.dnedev.favorite.places.R
 import com.dnedev.favorite.places.databinding.MapFragmentBinding
 import com.dnedev.favorite.places.utils.POMORIE_LATITUDE
 import com.dnedev.favorite.places.utils.POMORIE_LONGITUDE
+import com.dnedev.favorite.places.utils.SHOW_ON_MAP_ITEM_KEY
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
@@ -26,8 +26,6 @@ class MapFragment : DaggerFragment(), OnMapReadyCallback {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: MapViewModel by activityViewModels { viewModelFactory }
     private lateinit var binding: MapFragmentBinding
-
-    //TODO get arguments for show on map
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,14 +67,30 @@ class MapFragment : DaggerFragment(), OnMapReadyCallback {
                 }
             })
 
-            googleMap.moveCamera(
-                CameraUpdateFactory.newLatLng(
-                    LatLng(
-                        POMORIE_LATITUDE,
-                        POMORIE_LONGITUDE
-                    )
-                )
+            arguments?.getString(SHOW_ON_MAP_ITEM_KEY)?.let {
+                viewModel.showOnMap(it)?.let { location ->
+                    moveToCurrentLocation(location, googleMap)
+                }
+                arguments?.remove(SHOW_ON_MAP_ITEM_KEY)
+            }
+
+            moveToCurrentLocation(
+                LatLng(
+                    POMORIE_LATITUDE,
+                    POMORIE_LONGITUDE
+                ), googleMap
             )
         }
+    }
+
+    private fun moveToCurrentLocation(
+        currentLocation: LatLng,
+        googleMap: GoogleMap
+    ) {
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15f))
+        // Zoom in, animating the camera.
+        googleMap.animateCamera(CameraUpdateFactory.zoomIn())
+        // Zoom out to zoom level 10, animating with a duration of 2 seconds.
+        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15f), 2000, null)
     }
 }

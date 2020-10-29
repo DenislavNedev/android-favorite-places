@@ -11,5 +11,9 @@
     <fragment
         android:id="@+id/venuesFragment"
         android:name="com.dnedev.favorite.places.ui.venues.VenuesFragment"
-        android:label="VenuesFragment" />
+        android:label="VenuesFragment">
+        <action
+            android:id="@+id/action_venuesFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
 </navigation>
