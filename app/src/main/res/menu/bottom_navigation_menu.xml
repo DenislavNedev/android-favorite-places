@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/venuesFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_venues"
+        android:title="@string/venues" />
+
+    <item
+        android:id="@+id/mapFragment"
+        android:enabled="true"
+        android:icon="@drawable/ic_map"
+        android:title="@string/map" />
+</menu>
