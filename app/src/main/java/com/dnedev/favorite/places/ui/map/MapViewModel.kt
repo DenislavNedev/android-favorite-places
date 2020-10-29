@@ -5,12 +5,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
+import com.dnedev.favorite.places.data.venues.convertToVenueItemUiModel
 import com.dnedev.favorite.places.repositories.venues.VenuesRepository
 import com.dnedev.favorite.places.ui.venues.VenueItemUiModel
-import com.dnedev.favorite.places.utils.POMORIE_NEAR_CITY
-import com.dnedev.favorite.places.utils.RADIUS
-import com.dnedev.favorite.places.utils.RESTAURANT_CATEGORY_ID
-import com.dnedev.favorite.places.utils.SUPERMARKET_CATEGORY_ID
+import com.dnedev.favorite.places.utils.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.coroutines.launch
@@ -59,14 +57,39 @@ class MapViewModel @Inject constructor(
     }
 
     override fun loadRestaurants() {
-        viewModelScope.launch {
-            initVenues(RESTAURANT_CATEGORY_ID)
-        }
+        loadVenues(RESTAURANT_CATEGORY_ID)
     }
 
     override fun loadSupermarkets() {
+        loadVenues(SUPERMARKET_CATEGORY_ID)
+    }
+
+    private fun loadVenues(categoryId: String) {
         viewModelScope.launch {
-            initVenues(SUPERMARKET_CATEGORY_ID)
+            if (getApplication<Application>().applicationContext.isNetworkAvailable()) {
+                initVenues(categoryId)
+            } else {
+                loadVenuesOffline(categoryId)
+            }
+        }
+    }
+
+    private suspend fun loadVenuesOffline(categoryId: String) {
+        _uiModel.addSource(venuesRepository.getAllVenues()) { favoriteVenues ->
+            favoriteVenues.filter { it.categoryId == categoryId }
+                .map { it.convertToVenueItemUiModel() }.let { venues ->
+                    _uiModel.value = _uiModel.value?.apply {
+                        this.listOfVenues = venues
+                        this.listOfMarkers = venues.map { venue ->
+                            MarkerOptions().position(
+                                LatLng(
+                                    venue.latitude,
+                                    venue.longitude
+                                )
+                            ).title(venue.name)
+                        }
+                    }
+                }
         }
     }
 }
