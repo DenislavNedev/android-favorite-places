@@ -40,6 +40,7 @@ class VenuesFragment : DaggerFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        lifecycle.addObserver(viewModel)
         viewModel.initViewModel()
         observeUiModel()
         initRecyclerView()

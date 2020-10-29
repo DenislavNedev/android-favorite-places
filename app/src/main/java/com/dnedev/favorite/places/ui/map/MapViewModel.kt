@@ -1,10 +1,7 @@
 package com.dnedev.favorite.places.ui.map
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.dnedev.favorite.places.R
 import com.dnedev.favorite.places.data.venues.convertToVenueItemUiModel
 import com.dnedev.favorite.places.repositories.venues.VenuesRepository
@@ -23,7 +20,8 @@ class MapViewModel @Inject constructor(
     private val venuesRepository: VenuesRepository
 ) : AndroidViewModel(application),
     MapPresenter,
-    GoogleMap.OnInfoWindowClickListener {
+    GoogleMap.OnInfoWindowClickListener,
+    LifecycleObserver {
 
     private val _uiModel = MediatorLiveData<MapUiModel>().apply {
         value = MapUiModel()
@@ -148,6 +146,11 @@ class MapViewModel @Inject constructor(
             ?.let {
                 addVenueAsFavorite(it)
             }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    private fun clearUiModel() {
+        _uiModel.value = MapUiModel()
     }
 
     companion object {

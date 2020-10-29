@@ -1,10 +1,7 @@
 package com.dnedev.favorite.places.ui.venues
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.dnedev.favorite.places.R
 import com.dnedev.favorite.places.data.venues.convertToVenueItemUiModel
 import com.dnedev.favorite.places.repositories.venues.VenuesRepository
@@ -16,7 +13,8 @@ class VenuesViewModel @Inject constructor(
     application: Application,
     private val venuesRepository: VenuesRepository
 ) : AndroidViewModel(application),
-    VenueItemPresenter {
+    VenueItemPresenter,
+    LifecycleObserver {
 
     private val _uiModel = MediatorLiveData<VenuesUiModel>().apply {
         value = VenuesUiModel()
@@ -24,7 +22,9 @@ class VenuesViewModel @Inject constructor(
     val uiModel: LiveData<VenuesUiModel>
         get() = _uiModel
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun initViewModel() {
+        _uiModel.value = VenuesUiModel()
         viewModelScope.launch {
             if (getApplication<Application>().applicationContext.isNetworkAvailable()) {
                 viewModelScope.launch {
