@@ -17,6 +17,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/colorWhite"
             android:orientation="vertical">
 
             <TextView
@@ -26,6 +27,7 @@
                 android:layout_marginTop="64dp"
                 android:layout_marginEnd="16dp"
                 android:gravity="center"
+                android:textColor="@color/colorPrimaryDark"
                 android:textSize="18sp"
                 app:setTextResource="@{uiModel.errorMessageId}"
                 app:visibleGone="@{uiModel.venuesListEmpty}" />
