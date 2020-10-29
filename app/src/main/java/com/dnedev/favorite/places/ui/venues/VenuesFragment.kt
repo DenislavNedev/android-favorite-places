@@ -42,10 +42,10 @@ class VenuesFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         lifecycle.addObserver(viewModel)
-        viewModel.initViewModel()
         observeUiModel()
         observeNavigation()
         initRecyclerView()
+        swipeToRefreshData()
     }
 
     private fun observeUiModel() {
@@ -53,6 +53,13 @@ class VenuesFragment : DaggerFragment() {
             binding.uiModel = it
             venuesListAdapter.submitList(it.listOfVenues)
         })
+    }
+
+    private fun swipeToRefreshData() {
+        swipeRefreshLayout.setOnRefreshListener {
+            viewModel.initViewModel()
+            swipeRefreshLayout.isRefreshing = false
+        }
     }
 
     private fun observeNavigation() {
@@ -67,6 +74,4 @@ class VenuesFragment : DaggerFragment() {
             adapter = venuesListAdapter
         }
     }
-
-    //TODO add pull down to refresh
 }

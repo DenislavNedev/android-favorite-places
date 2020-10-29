@@ -14,6 +14,7 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 import javax.inject.Inject
 
 class VenuesViewModel @Inject constructor(
@@ -54,16 +55,18 @@ class VenuesViewModel @Inject constructor(
         }
     }
 
-    //TODO try and catch
-
     private suspend fun initVenues(categoryId: String) {
-        handleVenueResponse(
-            venuesRepository.getVenues(
-                POMORIE_NEAR_CITY,
-                RADIUS,
-                categoryId
-            ), categoryId
-        )
+        try {
+            handleVenueResponse(
+                venuesRepository.getVenues(
+                    POMORIE_NEAR_CITY,
+                    RADIUS,
+                    categoryId
+                ), categoryId
+            )
+        } catch (exception: Exception) {
+            _uiModel.value?.errorMessageId = R.string.unexpected_error
+        }
     }
 
     private suspend fun loadVenuesOffline() {
@@ -113,16 +116,24 @@ class VenuesViewModel @Inject constructor(
     }
 
     private fun handleVenueResponse(
-        response: Pair<List<VenueItemUiModel>?, String?>,
+        response: Pair<List<VenueItemUiModel>?, Int?>,
         categoryId: String
     ) {
-        _uiModel.value = _uiModel.value?.apply {
-            (response.first ?: emptyList()).let { responseList ->
-                if (responseList.isNotEmpty()) {
-                    this.listOfVenues =
-                        listOfVenues + createVenueHeaderItem(categoryId) + responseList
+        when {
+            response.first != null -> {
+                _uiModel.value = _uiModel.value?.apply {
+                    (response.first ?: emptyList()).let { responseList ->
+                        if (responseList.isNotEmpty()) {
+                            this.listOfVenues =
+                                listOfVenues + createVenueHeaderItem(categoryId) + responseList
+                        }
+                    }
                 }
             }
+            response.second != null -> {
+                _uiModel.value?.errorMessageId = response.second ?: INVALID_RESOURCE
+            }
+            else -> _uiModel.value?.errorMessageId = R.string.unexpected_error
         }
     }
 

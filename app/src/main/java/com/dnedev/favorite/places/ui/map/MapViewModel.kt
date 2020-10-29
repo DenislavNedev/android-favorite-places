@@ -19,6 +19,7 @@ import com.squareup.moshi.Moshi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 import javax.inject.Inject
 
 class MapViewModel @Inject constructor(
@@ -36,26 +37,37 @@ class MapViewModel @Inject constructor(
         get() = _uiModel
 
     private suspend fun initVenues(categoryId: String) {
-        handleVenueResponse(
-            venuesRepository.getVenues(
-                POMORIE_NEAR_CITY,
-                RADIUS,
-                categoryId
+        try {
+            handleVenueResponse(
+                venuesRepository.getVenues(
+                    POMORIE_NEAR_CITY,
+                    RADIUS,
+                    categoryId
+                )
             )
-        )
+        } catch (exception: Exception) {
+            //Do nothing since the criteria in the assignment is to show empty map, when no results are found
+        }
     }
 
     private fun handleVenueResponse(
-        response: Pair<List<VenueItemUiModel>?, String?>
+        response: Pair<List<VenueItemUiModel>?, Int?>
     ) {
-        _uiModel.value = _uiModel.value?.apply {
-            (response.first ?: emptyList()).let { responseList ->
-                if (responseList.isNotEmpty()) {
-                    this.listOfVenues = responseList
-                    this.listOfMarkers = responseList.map { venue ->
-                        createMapMarker(venue)
+        when {
+            response.first != null -> {
+                _uiModel.value = _uiModel.value?.apply {
+                    (response.first ?: emptyList()).let { responseList ->
+                        if (responseList.isNotEmpty()) {
+                            this.listOfVenues = responseList
+                            this.listOfMarkers = responseList.map { venue ->
+                                createMapMarker(venue)
+                            }
+                        }
                     }
                 }
+            }
+            else -> {
+                //Do nothing since the criteria in the assignment is to show empty map, when no results are found
             }
         }
     }

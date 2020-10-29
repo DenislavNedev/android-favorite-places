@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.databinding.BindingAdapter
 import com.dnedev.favorite.places.R
+import com.dnedev.favorite.places.utils.INVALID_RESOURCE
 
 object AppBindingAdapter {
     @BindingAdapter("setTextResource")
@@ -13,7 +14,7 @@ object AppBindingAdapter {
         view: TextView,
         @StringRes stringResource: Int
     ) {
-        if (stringResource != 0) {
+        if (stringResource != INVALID_RESOURCE) {
             view.text = view.context.getString(stringResource)
         }
     }

@@ -2,7 +2,7 @@
     <string name="app_name">FavoritePlaces</string>
     <string name="venues">Venues</string>
     <string name="map">Map</string>
-    <string name="unexpected_error">An error occurred. Please try again later.</string>
+    <string name="unexpected_error">Something went wrong. Swipe down to refresh.</string>
     <string name="database_name">favorite_places_database</string>
     <string name="restaurants">Restaurants</string>
     <string name="supermarkets">Supermarkets</string>
