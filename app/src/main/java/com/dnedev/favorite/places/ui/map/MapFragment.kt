@@ -60,7 +60,9 @@ class MapFragment : DaggerFragment(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap?) {
         map?.let { googleMap ->
+            googleMap.setOnInfoWindowClickListener(viewModel)
             viewModel.uiModel.observe(viewLifecycleOwner, {
+                map.clear()
                 it.listOfMarkers.forEach { marker ->
                     googleMap.addMarker(marker)
                 }
